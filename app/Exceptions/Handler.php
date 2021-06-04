@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Illuminate\Auth\AuthenticationException;
+use App\Models\LogError;
 
 class Handler extends ExceptionHandler
 {
@@ -36,7 +37,27 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            //
+            $user = auth()->user();
+            LogError::create([
+                'user_id' => $user ? $user->id : 0,
+                'exception' => $e->getMessage(),
+                'message' => get_class($e),
+                'line' => $e->getline(),
+                'trace' => array_map(function($trace) {
+                    unset($trace['args']);
+                    return $trace;
+                }, $e->getTrace()),
+                'method' => request()->getMethod(),
+                'params' => request()->all(),
+                'uri' => request()->getPathInfo(),
+                'user_agent' => request()->userAgent(),
+                'header' => request()->headers->all()
+            ]);
+
+        });
+
+        $this->renderable(function(Throwable $e) {
+            return response()->view('error');
         });
     }
 
