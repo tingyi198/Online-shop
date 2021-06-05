@@ -33,6 +33,7 @@ Route::resource('admin/products', 'Admin\ProductController');
 Route::post('admin/products/upload-image', 'Admin\ProductController@uploadImage');
 
 Route::post('admin/orders/{id}/delivery', 'Admin\OrderController@delivery');
+Route::get('/admin/orders/excel/export', 'Admin\OrderController@export');
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('user', 'AuthController@user');
