@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Product;
+use Illuminate\Http\Request;
+use App\Imports\ProductsImport;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Redis;
 
 
@@ -18,8 +20,8 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $productCount = Product::whereHas('orderItems')->count();
-        $dataPerPage = 2;
+        $productCount = Product::count();
+        $dataPerPage = 5;
         $productPages = ceil($productCount / $dataPerPage);
         $currentPage = isset($request->all()['page']) ? $request->all()['page'] : 1;
         $products = Product::orderBy('created_at', 'desc')
@@ -53,6 +55,13 @@ class ProductController extends Controller
             'path' => $path
         ]);
 
+        return redirect()->back();
+    }
+
+    public function import(Request $request)
+    {
+        $file = $request->file('excel');
+        Excel::import(new ProductsImport, $file);
         return redirect()->back();
     }
 

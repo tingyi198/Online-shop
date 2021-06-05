@@ -31,6 +31,7 @@ Route::post('login', 'AuthController@login');
 Route::resource('admin/orders', 'Admin\OrderController');
 Route::resource('admin/products', 'Admin\ProductController');
 Route::post('admin/products/upload-image', 'Admin\ProductController@uploadImage');
+Route::post('/admin/products/excel/import', 'Admin\ProductController@import');
 
 Route::post('admin/orders/{id}/delivery', 'Admin\OrderController@delivery');
 Route::get('/admin/orders/excel/export', 'Admin\OrderController@export');

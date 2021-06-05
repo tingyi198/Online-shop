@@ -4,6 +4,9 @@
 
 <h2>產品列表</h2>
 <span>產品總數: {{ $productCount }}</span>
+<div>
+    <input type="button" class="import" value="匯入 Excel">
+</div>
 
 @if($errors->any())
 <div class="alert alert-danger">
@@ -44,13 +47,17 @@
 </table>
 <div>
     @for($i = 1; $i <= $productPages; $i++) <a href="/admin/products?page={{ $i }}">第 {{$i}} 頁</a>
-        @endfor
+    @endfor
 </div>
 
 <script>
     $('.upload_image').click(function() {
         $('#product_id').val($(this).data('id'))
         $('#upload_image').modal('show')
+    })
+
+    $(".import").click(function() {
+        $("#import").modal('show')
     })
 </script>
 
