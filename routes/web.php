@@ -35,6 +35,7 @@ Route::post('/admin/products/excel/import', 'Admin\ProductController@import');
 
 Route::post('admin/orders/{id}/delivery', 'Admin\OrderController@delivery');
 Route::get('/admin/orders/excel/export', 'Admin\OrderController@export');
+Route::get('/admin/orders/excel/export-by-shipped', 'Admin\OrderController@exportByShipped');
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('user', 'AuthController@user');
