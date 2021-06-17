@@ -43,8 +43,9 @@ class CartItem extends Model
 
     public function deleteCartItem($id)
     {
-        $test = CartItem::withTrashed()->where('quantity', 2)->get();
-        print_r($test);
+        CartItem::find($id)->delete();
+        // $test = CartItem::withTrashed()->where('quantity', 2)->get();
+        // print_r($test);
         // CartItem::onlyTrashed()->where('id', $id)->restore();
         // return CartItem::find($id)->delete();
     }

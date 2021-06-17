@@ -86,7 +86,7 @@ class CartItemController extends Controller
         $validate = $request->validated();
         $cartItem = new CartItem();
         $cartItemRes = $cartItem->updateCartItem($request->all(), $id);
-        return response()->json($cartItemRes);
+        return response()->json(true);
     }
 
     /**
@@ -98,7 +98,6 @@ class CartItemController extends Controller
     public function destroy($id)
     {
         $cartItem = new CartItem();
-        $cartItemRes = $cartItem->deleteCartItem($id);
-        return $cartItemRes;
+        $cartItem->deleteCartItem($id);
     }
 }
