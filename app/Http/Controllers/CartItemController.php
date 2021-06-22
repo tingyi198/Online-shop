@@ -85,7 +85,7 @@ class CartItemController extends Controller
     {
         $validate = $request->validated();
         $cartItem = new CartItem();
-        $cartItemRes = $cartItem->updateCartItem($request->all(), $id);
+        $cartItem->updateCartItem($request->all(), $id);
         return response()->json(true);
     }
 
