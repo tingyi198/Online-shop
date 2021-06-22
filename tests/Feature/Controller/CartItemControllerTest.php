@@ -3,9 +3,10 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\Models\Cart;
 use App\Models\User;
-use App\Models\Product;
 // use PHPUnit\Framework\TestCase;
+use App\Models\Product;
 use App\Models\CartItem;
 use Laravel\Passport\Passport;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -36,13 +37,8 @@ class CartItemControllerTest extends TestCase
      */
     public function testStore()
     {
-        $cart = $this->fakeUser->carts()->create();
-        $product = Product::create([
-            'title' => 'Test Product',
-            'content' => 'Test Product Content',
-            'price' => 10,
-            'quantity' => 100
-        ]);
+        $cart = Cart::factory()->create();
+        $product = Product::factory()->create();
 
         $response = $this->call(
             'POST',
@@ -54,6 +50,16 @@ class CartItemControllerTest extends TestCase
             ]
         );
         $response->assertOk();
+
+        // 庫存不足
+        $product = Product::factory()->less()->create();
+        $response = $this->call(
+            'POST',
+            'cart-item/',
+            ['cart_id' => $cart->id, 'product_id' => $product->id, 'quantity' => 10]
+        );
+
+        $this->assertEquals($product->title . '庫存不足', $response->getContent());
 
         $response = $this->call(
             'POST',
@@ -69,40 +75,40 @@ class CartItemControllerTest extends TestCase
 
     public function testUpdate()
     {
-        $cart = $this->fakeUser->carts()->create();
-        $product = Product::create([
-            'title' => 'Test Product',
-            'content' => 'Test Product Content',
-            'price' => 10,
-            'quantity' => 100
-        ]);
-        $cart_item = $cart->cartItems()->create([
-            'product_id' => $product->id,
-            'quantity' => 10
-        ]);
+        // $cart = $this->fakeUser->carts()->create();
+        // $product = Product::factory()->create();
+        // $cart_item = $cart->cartItems()->create([
+        //     'product_id' => $product->id,
+        //     'quantity' => 10
+        // ]);
 
+        // $response = $this->call(
+        //     'PUT',
+        //     'cart-item/'.$cart_item->id,
+        //     ['quantity' => 1]
+        // );
+
+        // 更新數量
+        $update_quantity = 5;
+        $cart_item = CartItem::factory()->create();
         $response = $this->call(
             'PUT',
-            'cart-item/'.$cart_item->id,
-            ['quantity' => 1]
+            'cart-item/' . $cart_item->id,
+            ['quantity' => $update_quantity]
         );
+
         $this->assertEquals('true', $response->getContent());
 
         // 刷新資料庫
         $cart_item->refresh();
 
-        $this->assertEquals(1, $cart_item->quantity);
+        $this->assertEquals($update_quantity, $cart_item->quantity);
     }
 
     public function testDestroy()
     {
         $cart = $this->fakeUser->carts()->create();
-        $product = Product::create([
-            'title' => 'Test Product2',
-            'content' => 'Test Product Content2',
-            'price' => 10,
-            'quantity' => 100
-        ]);
+        $product = Product::factory()->create();
         $cartItem = $cart->cartItems()->create([
             'product_id' => $product->id,
             'quantity' => 10
