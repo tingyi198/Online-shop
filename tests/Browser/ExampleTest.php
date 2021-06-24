@@ -73,4 +73,16 @@ class ExampleTest extends DuskTestCase
         });
     }
 
+    public function testFillForm()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/contact-us')
+                ->value('[name="name"]', '安安')
+                ->select('[name="product"]', '食品')
+                ->press('送出')
+                ->assertQueryStringHas('name', '安安')
+                ->assertQueryStringHas('product', '食品');
+        });
+    }
+
 }
