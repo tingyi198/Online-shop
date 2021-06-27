@@ -3,13 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use Illuminate\Support\Facades\Redis;
 use App\Http\Services\ShortUrlService;
 
 class ProductController extends Controller
 {
+
+    public function __construct(ShortUrlService $shortUrlService)
+    {
+        $this->shortUrlService = $shortUrlService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -36,8 +41,7 @@ class ProductController extends Controller
 
     public function sharedUrl($id)
     {
-        $service = new ShortUrlService();
-        $url = $service->makeShortUrl("http://localhost:3000/products/$id");
+        $url = $this->shortUrlService->makeShortUrl("http://localhost:3000/products/$id");
         return response(['url' => $url]);
     }
 
